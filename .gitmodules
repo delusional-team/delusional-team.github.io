@@ -1,0 +1,3 @@
+[submodule "upstream/DELU"]
+	path = upstream/DELU
+	url = https://github.com/delusional-team/DELU.git
