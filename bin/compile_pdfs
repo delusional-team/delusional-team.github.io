@@ -23,6 +23,7 @@ dirs="$(cd "$repo_base"/upstream && find . -type d)"
 
 for dir in $dirs; do
     mkdir -p $compiled_base/$dir
+    touch $compiled_base/$dir/.gitkeep
 done
 
 docx_files="$(cd "$repo_base"/upstream && find . -name '*.docx' -type f)"

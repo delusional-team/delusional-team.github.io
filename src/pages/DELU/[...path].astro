@@ -30,6 +30,9 @@ export const getStaticPaths = (async () => {
 
 
 		for (const dir of dirs) {
+			if (dir.endsWith('.gitkeep')) {
+				continue;
+			}
 			const stat = await fs.stat(join(current, dir));
 
 			const childTraversed = stat.isDirectory()
