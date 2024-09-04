@@ -8,4 +8,6 @@ git submodule update --recursive --remote
 
 git add .
 
-git commit
+git commit -m 'pull latest changes from upstream'
+
+git push origin $(git branch --show-current)
