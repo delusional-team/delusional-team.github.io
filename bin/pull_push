@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Fetches all submodule changes
+git submodule update --recursive --remote
+
+# Compile the changes to pdf
+./bin/compile_pdfs
+
+git add .
+
+git commit
