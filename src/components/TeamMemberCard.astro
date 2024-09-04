@@ -1,0 +1,59 @@
+---
+const { name, code, role, side, imageURL, profileURL, } = Astro.props;
+
+type Side = 'left' | 'right';
+
+type Props = {
+  name: string;
+  code: string;
+  role: string;
+  side: Side,
+  imageURL: string;
+  profileURL: string;
+};
+---
+
+{
+  side == 'left' ?
+    <div id="container">
+      <a href={profileURL}>
+        <img src={imageURL} alt={name} width="180" />
+      </a>
+      <div id="content" style="padding-left: 24px;">
+        <h2>{name}</h2>
+        <span>{code} — {role}</span>
+        <p><slot/></p>
+      </div>
+    </div>
+  : <div id="container">
+      <div id="content" style="padding-right: 20px;">
+        <h2>{name}</h2>
+        <span>{code} — {role}</span>
+        <p><slot/></p>
+      </div>
+      <a href={profileURL}>
+        <img src={imageURL} alt={name} width="180" />
+      </a>
+    </div>
+}
+
+<style>
+  div#container {
+    padding: 32px;
+    display: flex;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    margin-bottom: 24px;
+  }
+  img {
+    max-width: 200px;
+  }
+  h2 {
+    font-size: 24px;
+  }
+  p {
+    margin-top: 10px;
+  }
+  div#content {
+    flex: 1;
+  }
+</style>

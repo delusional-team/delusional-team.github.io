@@ -1,0 +1,145 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import TeamMemberCard from '@components/TeamMemberCard.astro';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1> Delusional team</h1>
+			<span><strong>Grupo 6</strong></span>
+			<p>
+				DELU se compone de 6 talentosos desarrolladores expertos en la Gestión de Configuración de
+				Software, que han trabajado en proyectos de desarrollo de software de alta calidad.
+			</p>
+			<div style="height: 109px;">
+				<object type="image/svg+xml" data="https://gh-card.dev/repos/delusional-team/DELU.svg?fullname=&link_target=_blank"></object>
+			</div>
+			<hr>
+			<br>
+			<h3>Nuestro equipo</h3>
+			<br>
+			<TeamMemberCard
+				name='Matthew Alexandre, Pariona Molina'
+				code='22200235'
+				role='Jefe de proyecto'
+				side='right'
+				imageURL='https://avatars.githubusercontent.com/u/137377872?v=4'
+				profileURL='https://github.com/AoiNabi'
+			>
+				Puede traducir el universo en requisitos. Los stakeholders alegan haberlo visto en sus
+				sueños. Literalmente va programando mientras le cuentas lo que necesitas. Sus deadlines
+				no se cumplen, el tiempo se rinde.
+			</TeamMemberCard>
+			<TeamMemberCard
+				name='Flores Cóngora, Paolo Luis'
+				code='22200232'
+				role='Programador fullstack'
+				side='left'
+				imageURL='https://avatars.githubusercontent.com/u/98111143?v=4'
+				profileURL='https://github.com/paoloose'
+			>
+				Programa en "lógica de negocio". Sus únicas vulnerabilidades son emocionales.
+				Solo su enfermera puede decir que le ha hecho una inyección.
+				Complica ridículamente el proyecto "por diversión".
+			</TeamMemberCard>
+			<TeamMemberCard
+				name='Calle Huamantinco, Luis Eduardo'
+				code='22200255'
+				role='Programador backend'
+				side='right'
+				imageURL='https://avatars.githubusercontent.com/u/123672027?v=4'
+				profileURL='https://github.com/luedu1103'
+			>
+				Escribe sus sueños en tablas SQL. Vivir es solo un <em>caso de uso</em> más.
+				<code>select 'phone' from girls order by 'beauty' desc</code>.
+				Algunos clientes prefieren usar su API en lugar de la aplicación.
+			</TeamMemberCard>
+			<TeamMemberCard
+				name='Calongos Jara, Leonid'
+				code='22200102'
+				role='Programador frontend y analista'
+				side='left'
+				imageURL='https://avatars.githubusercontent.com/u/143663889?v=4'
+				profileURL='https://github.com/LeonidCJ'
+			>
+				El navegador no ejecuta su código; lo contempla, agradece, y lo empieza a recitar.
+				Cuando va a debuggear, los bugs tienen miedo de mostrarse.
+				Probablemente ya ha mockeado el proyecto entero. "Ya está el backend?".
+			</TeamMemberCard>
+			<TeamMemberCard
+				name='Luján Vila Frank José'
+				code='12200058'
+				role='Diseñador UX'
+				side='right'
+				imageURL='https://avatars.githubusercontent.com/u/116927934?v=4'
+				profileURL='https://github.com/jose-lv'
+			>
+				Chamán del diseño. Algunos clientes han preferido usar sus Figmas en lugar del proyecto final.
+				También es programador, pero "no voy a dejar que ellos diseñen".
+			</TeamMemberCard>
+			<TeamMemberCard
+				name='Moreno Zevallos Eva Lucía'
+				code='20200277'
+				role='Analista QA'
+				side='left'
+				imageURL='https://avatars.githubusercontent.com/u/106415557?v=4'
+				profileURL='https://github.com/EvaMoreno11'
+			>
+				Manda deploy exclusivamente los feriados. No sabe qué es un rollback, nunca lo ha necesitado.
+				ISO 9001? <strong>Yalaza</strong>. Literalmente solo puede ver bugs en tu código.
+				"No te preocupes, ya lo arreglé".
+			</TeamMemberCard>
+			<hr>
+			<br>
+			<h3>El mejor software de la industria</h3>
+			<br>
+			<div>
+				<img id="delusional-img" src="imgs/somos_expertos.png" width="200px" height="230px" />
+				<div>
+					<p>
+						DELU™ ofrece la mejor calidad del mercado. Nuestro software es el más seguro, rápido y
+						eficiente. Nuestro equipo de expertos se encarga de que cada línea de código sea perfecta.
+					</p>
+					<p>
+						Nuestra documentación es la más completa y detallada. Cada archivo es revisado y aprobado
+						por nuestro equipo de calidad.
+					</p>
+				</div>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	img#delusional-img {
+		float: left;
+		margin-right: 28px;
+		margin-bottom: 8px;
+		border-radius: 12px;
+		max-height: 230px;
+		box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.1);
+	}
+
+	#pdf-embed {
+		height: 100vh;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	td:first-child {
+		width: 115px;
+	}
+</style>

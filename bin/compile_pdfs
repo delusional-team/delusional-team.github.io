@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+# Depends on libreoffice to work
+
+# sudo apt install --no-install-recommends
+# default-jre libreoffice-java-common libreoffice-core libreoffice-writer libreoffice-common
+
+this_base="$(dirname "${BASH_SOURCE[0]}")"
+this_base="$(cd $this_base && pwd)"
+cd "$this_base"
+repo_base="${this_base%/*}"
+
+compiled_base="$repo_base/public/compiled"
+upstream_base="$repo_base/upstream"
+
+function docxtopdf {
+    libreoffice --headless --convert-to pdf --outdir $2 $1 >/dev/null
+}
+
+dirs="$(cd "$repo_base"/upstream && find . -type d)"
+
+for dir in $dirs; do
+    mkdir -p $compiled_base/$dir
+done
+
+docx_files="$(cd "$repo_base"/upstream && find . -name '*.docx' -type f)"
+
+for docx in $docx_files; do
+    docxtopdf $upstream_base/$docx $compiled_base/${docx%/*}
+done

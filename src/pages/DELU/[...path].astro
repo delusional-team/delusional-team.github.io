@@ -1,0 +1,251 @@
+---
+import type { GetStaticPaths, GetStaticPathsItem } from "astro";
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import fs from 'node:fs/promises';
+import { join, normalize } from 'node:path';
+
+type FSNodeInfo = {
+	path: string,
+	isDir: boolean,
+	level: number,
+	children: FSNodeInfo[],
+	// recursive children count, not just the first level
+	childCount: {
+		dirs: number,
+		files: number,
+	}
+}
+
+export const getStaticPaths = (async () => {
+	const baseDir = 'compiled/DELU';
+
+	const traverse = async (path: string, level: number = 1) => {
+		const current = join('public', baseDir, path);
+
+		const dirs = await fs.readdir(current);
+		const traversed: FSNodeInfo[] = [];
+
+
+		for (const dir of dirs) {
+			const stat = await fs.stat(join(current, dir));
+
+			const childTraversed = stat.isDirectory()
+				? await traverse(join(path, dir), level + 1)
+				: [];
+
+			// console.log(`🐢 public/${path}/${dir}`);
+			// console.log(childTraversed.filter((node) => node.level === level + 1));
+
+			traversed.push({
+				path: join(path, dir).replace(/^\/compiled\/DELU/, ''),
+				level: level,
+				isDir: stat.isDirectory(),
+				children: childTraversed.filter((node) => node.level === level + 1),
+				childCount: {
+					dirs: childTraversed.filter((node) => node.isDir).length,
+					files: childTraversed.filter((node) => !node.isDir).length,
+				}
+			});
+
+			traversed.push(...childTraversed);
+		}
+		return traversed;
+	};
+
+	const nodes = await traverse('/');
+
+	const mainPage = {
+		params: { path: undefined, },
+		props: {
+			nodeInfo: {
+				path: '',
+				isDir: true,
+				level: 0,
+				children: nodes.filter((node) => node.level === 1),
+				childCount: {
+					dirs: nodes.filter((node) => node.isDir).length,
+					files: nodes.filter((node) => !node.isDir).length,
+				}
+			} satisfies FSNodeInfo,
+		},
+	};
+
+	const mappedNodes = nodes.map((node) => {
+		return {
+			params: { path: node.path },
+			props: {
+				nodeInfo: node,
+			},
+		} satisfies GetStaticPathsItem;
+	});
+
+	console.log(mainPage.props.nodeInfo.children)
+
+	return [mainPage, ...mappedNodes];
+}) satisfies GetStaticPaths;
+
+
+const { nodeInfo } = Astro.props;
+
+let backpath = normalize(join('/DELU', nodeInfo.path, '..'));
+if (backpath == '/') {
+	backpath = '/DELU';
+}
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<script src="../../scripts/toasts.ts"/>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section id="header" style="display: flex; gap: 12px; align-items: center;">
+				<button onclick="history.back()" style="height: 24px;">
+					<span>Volver</span>
+				</button>
+				<a href={backpath} style="display: flex; align-items: center; gap: 12px;">
+					{nodeInfo.path || '/'}
+				</a>
+			</section>
+			<section id="file-list">
+				<ul>
+					{
+						nodeInfo.isDir ?
+							nodeInfo.children.map((child) => (
+								<li>
+									{
+										child.isDir ?
+											<a
+												class="navigate-anchor"
+												href={join('/DELU', child.path)}
+												data-isempty={child.childCount.dirs + child.childCount.files === 0 ? 'true' : 'false'}
+												data-nodetype={'dir'}
+												data-nodename={child.path.split('/').pop()}
+												style="display: flex; align-items: center; justify-content: space-between;"
+											>
+												<div style="display: flex; align-items: center; gap: 12px;">
+													<img src="/imgs/folder.svg" height="40px" width="40px" />
+													<h4 class="title">{child.path.split('/').pop()}</h4>
+												</div>
+												<div>
+													{child.childCount.dirs} carpetas, {child.childCount.files} archivos
+												</div>
+											</a>
+										:
+											<a
+												class="navigate-anchor"
+												href={join('/DELU', child.path)}
+												data-isempty={'false'}
+												data-nodetype={'file'}
+												data-nodename={child.path.split('/').pop()}
+												style="display: flex; align-items: center; justify-content: space-between;"
+											>
+												<div style="display: flex; align-items: center; gap: 12px;">
+													<img src="/imgs/file.svg" height="40px" width="40px" />
+													<h4 class="title">{child.path.split('/').pop()}</h4>
+												</div>
+												<div></div>
+											</a>
+									}
+								</li>
+							))
+						: <div>
+							<embed src={join('/compiled', 'DELU', nodeInfo.path)} width="100%" height="1000px" />
+						</div>
+					}
+				</ul>
+			</section>
+		</main>
+		<Footer lowkey />
+	</body>
+</html>
+
+<style>
+	html {
+		scrollbar-gutter: stable;
+	}
+	main {
+		width: 960px;
+	}
+
+	section#header {
+		margin-bottom: 1em;
+	}
+	section#header a {
+		font-size: 1.1em;
+		text-decoration: none;
+		color: inherit;
+	}
+	section#header a:hover {
+		text-decoration: underline;
+	}
+	h4.title {
+		font-size: 24px;
+	}
+
+	ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	ul li {
+		margin-bottom: 20px;
+		border-bottom: 1px solid rgb(179, 179, 179);
+	}
+	ul li * {
+		text-decoration: none;
+		transition: 0.2s ease;
+	}
+
+	ul li img {
+		margin-bottom: 0.5rem;
+		border-radius: 12px;
+	}
+	ul li a {
+		display: block;
+	}
+	a[data-isempty="true"] h4 {
+		opacity: 0.5;
+	}
+	.title {
+		margin: 0;
+		color: rgb(var(--black));
+		line-height: 1;
+	}
+	.date {
+		margin: 0;
+		color: rgb(var(--gray));
+	}
+	ul li a:hover h4,
+	ul li a:hover .date {
+		color: rgb(var(--accent));
+	}
+	ul li a {
+		color: initial;
+	}
+	ul li a:hover h4 {
+		text-decoration: underline;
+	}
+	@media (max-width: 720px) {
+		ul {
+			gap: 0.5em;
+		}
+		ul li {
+			width: 100%;
+			text-align: center;
+		}
+		ul li:first-child {
+			margin-bottom: 0;
+		}
+		ul li:first-child .title {
+			font-size: 1.563em;
+		}
+	}
+</style>
